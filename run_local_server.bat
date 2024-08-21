@@ -1,17 +1,24 @@
 @echo off
-setlocal
 
-REM Set the directory of your HTML files
-set "DIR=C:\Users\shlomog\OneDrive - Mobileye\Desktop\Agas9\AgasPortal"
+REM Step 1: Pull the project
+git pull origin agas9
 
-REM Change to the directory
-cd /d "%DIR%"
-.venv\Scripts\activate
-flask --app agas_portal run
+REM Step 2: Change to the project directory
+cd agas9
 
-REM Start the Python HTTP server
-echo Starting local server at http://127.0.0.1:5000
-python -m http.server 8000
+REM Step 3: Checkout the relevant branch
+git checkout agas9
 
-endlocal
-pause
+REM Step 4: Create a virtual environment
+python -m venv .venv
+
+REM Step 5: Activate the virtual environment
+.\.venv\Scripts\activate
+
+REM Step 6: Install the relevant packages
+pip install -r requirements.txt
+
+REM Step 7: Run the wsgi.py script
+python wsgi.py
+
+@echo on
