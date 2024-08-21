@@ -1,0 +1,97 @@
+.calendar {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: #ebebeb65;
+    border-radius: 10px;
+    
+}
+
+.monthYearStyle {
+    align-items: center;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);   
+}
+
+.day {
+    text-align: center;
+    padding: auto;
+    color: #1a5c1a;
+    font-weight: 500;
+}
+
+.dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    margin: auto;
+    cursor: pointer;
+    font-weight: 600;
+    width: auto;
+    height: inherit;
+
+}
+
+.date.active {
+    background: #379777;
+    color: #F4CE14;
+    border-radius: 25%;
+}
+
+.date.inactive {
+    color: #d2d2d2;
+}
+
+.date.active-light {
+    color: #999fa6;
+}
+
+
+.clock-container {
+    background-color: #379777;
+    color: #F5F7F8;
+    padding: 15px 25px;
+    border-radius: 25px;
+    text-align: center;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Center horizontally */
+}
+
+.clock {
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Center content */
+    font-size: 3.5rem;
+    font-weight: bold;
+    width: 100%;
+}
+
+.clock span {
+    font-size: 3.5rem;
+    margin-left: 20px;  /* Space between time and icon */
+}
+
+.clock span {
+    font-size: 3.5rem;
+    border-radius: 1;
+}
