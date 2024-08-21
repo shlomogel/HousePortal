@@ -10,6 +10,7 @@ if not exist HousePortal (
 
 REM Step 2: Change to the project directory
 cd Agas9
+mkdir logs
 
 REM Step 3: Fetch the latest changes
 git fetch origin
