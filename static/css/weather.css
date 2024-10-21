@@ -1,0 +1,25 @@
+.weather-widget {
+    background-color: #5a5a5a52;
+    color: #03080a;
+    padding: 15px 25px;
+    border-radius: 25px;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.weather-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.weather-temp {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.weather-description {
+    font-size: 1.2rem;
+    text-align: left;
+}

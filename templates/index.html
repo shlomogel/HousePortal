@@ -7,43 +7,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <script src="https://unpkg.com/hebcal@2.3.2/dist/hebcal.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/weather.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        function updateTasks() {
-            $.getJSON("/get_tasks/", function(data) {
-                var tasksHtml = '';
-                for (var i = 0; i < data.length; i++) {
-                    tasksHtml += `
-                        <li class="list-group-item list-group-item-auto">
-                            <div class="update-header">
-                                <div class="update-title">${data[i][3]} ${data[i][1]}</div>
-                                <div class="update-date">${data[i][0]}</div>
-                            </div>
-                            <div class="update-content">${data[i][2]}</div>
-                        </li>
-                    `;
-                }
-                $("#updates-list").html(tasksHtml);
-            });
-        }
-
-        $(document).ready(function() {
-            updateTasks();
-            setInterval(updateTasks, 5000); // Update every 5 seconds
-        });
-    </script>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <span class="navbar-brand">🏠 ברוכים הבאים לפורטל אגס 9</span>
-        </div>
-    </nav>
-
+    <div class="header-container">
+    <div class="container">
+        <a href="{{ url_for('routes.show_posts') }}">
+            <span class="header-text">🏠 ברוכים הבאים לפורטל אגס 9</span>
+        </a>
+    </div>
+</div>
     <div class="container-fluid mt-4">
         <div class="row">
             <div class="col-md-1">
@@ -85,45 +64,70 @@
                         </div>
                     </div>
                 </div>
-                
-                <ul id="updates-list" class="list-group">
-                    <!-- Content will be dynamically updated here -->
-                </ul>
-            </div>
-            <div class="col-md-3">
-                <div class="calendar">
-                    <header>
-                        <div class="monthYear" id="monthYear"></div>
-                    </header>
-                    <section>
-                        <ul class="days">
-                            <div class="day">יום א</div>
-                            <div class="day">יום ב</div>
-                            <div class="day">יום ג</div>
-                            <div class="day">יום ד</div>
-                            <div class="day">יום ה</div>
-                            <div class="day">יום ו</div>
-                            <div class="day">שבת</div>
-                        </ul>
-                        <ul class="dates" id="dates"></ul>
-                    </section>
+                <div id="posts-container" class="row mb-4">
+                    {% for post in posts %}
+                    <div class="col-md-4 d-flex mb-3">
+                        <div class="card text-center custom-card w-100">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h5 class="card-title">{{ post.title }}</h5>
+                                <div>
+                                    {% if post.icon %}
+                                        <span class="mb-2" style="font-size: 24px;">{{ post.icon }}</span>
+                                    {% endif %}
+                                    <p>{{ post.text }}</p>
+                                    {% if post.image_url %}
+                                        <img src="{{ post.image_url }}" alt="Post image" class="img-fluid mb-2">
+                                    {% endif %}
+                                    <p class="text-muted">{{ post.date.strftime('%Y-%m-%d %H:%M') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
-                <div class="mt-4 clock-container">
-                    <div id="current-time" class="clock">
-                        <span id="current-time"></span>
+                
+                <!-- <ul id="updates-list" class="list-group">
+                    Content will be dynamically updated here
+                </ul>
+                -->
+            </div>
+            
+            <div class="col-md-3">
+                <div class="datetime-widget mb-3">
+                    <div id="datetime-display" class="datetime-display">
+                        <!-- תוכן יוכנס דינמית על ידי JavaScript -->
+                    </div>
+                    <div style="text-align: center; font-weight: bold;">
+                        <script src="https://www.hebcal.com/etc/hdate-he.js" crossorigin="anonymous"></script>
                     </div>
                 </div>
-                <div class="mt-4 qr-code">
-                    <img src="{{ url_for('static', filename='images/aga9_g.webp') }}" alt="Description of the image" class="img-fluid rounded small-img">
+                
+                <div class="weather-widget mb-3">
+                    <div id="weather-display" class="weather-display">
+                        <!-- תוכן יוכנס דינמית על ידי JavaScript -->
+                    </div>
+                </div>
+                <br>
+                <div class="card-header bg-primary text-white">
+                        <h5 class="mb-8">חדשות מוואלה!</h5>
+                    </div>
+                    <br>
+                <div class="card news-container">
+                    
+                    <div class="card-body p-0">
+                        <div id="news-container">
+                            <!-- חדשות יוכנסו כאן דינמית -->
+                        </div>
+                    </div>
                 </div>
             </div>
+            
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
 
 </body>
 

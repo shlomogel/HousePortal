@@ -1,58 +1,33 @@
-from datetime import datetime
-import logging
-from flask import Flask, render_template, jsonify
-import pandas as pd
-from apscheduler.schedulers.background import BackgroundScheduler
+from flask import Flask
 from flask_apscheduler import APScheduler
-import webbrowser
-import threading
-import time
+import logging
+from models import db
+from routes import routes
+import os
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///posts.db"
+
+# Add these lines to set the secret key
+# app.config['SECRET_KEY'] = os.urandom(24)
+# Alternatively, you can set a fixed secret key (less secure but easier for development)
+app.config["SECRET_KEY"] = "20092024"
+app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, "static/uploads")
+
+db.init_app(app)
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Initialize scheduler
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
 
-sheet_id = "1aZ8NXVGa3MLiXEdTrwJ4O5OxAFq9u3qPKTTi1qgAAj4"
-tasks = None
+# Register the routes Blueprint
+app.register_blueprint(routes)
 
-
-logging.basicConfig(
-    filename="logs/data_refresh.log",
-    level=logging.INFO,
-    format="%(asctime)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
-
-def fetch_data():
-    global tasks
-    tasks = pd.read_csv(
-        f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv"
-    ).fillna("")
-    logging.info("Data refreshed")
-
-
-@scheduler.task("interval", id="fetch_sheet_data", seconds=30, misfire_grace_time=900)
-def scheduled_task():
-    fetch_data()
-
-
-fetch_data()
-
-
-@app.route("/")
-def hello():
-    return render_template("index.html", tasks=tasks.values.tolist())
-
-
-@app.route("/get_tasks/")
-def get_tasks():
-    return jsonify(tasks.values.tolist())
-
+with app.app_context():
+    db.create_all()
 
 if __name__ == "__main__":
-    app.run()
-    # app.run(debug=True)
+    app.run(debug=True)

@@ -7,7 +7,7 @@ import time
 
 def open_browser():
     time.sleep(1)
-    webbrowser.open("http://localhost:8080")
+    webbrowser.open("http://localhost:9999")
 
 
 if __name__ == "__main__":

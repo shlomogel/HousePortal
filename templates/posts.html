@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פוסטים - פורטל אגס 9</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">פוסטים</h1>
+        <a href="{{ url_for('routes.add_post') }}" class="btn btn-primary">הוסף פוסט חדש</a>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <div class="row">
+            {% for post in posts %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        {% if post.icon %}
+                            <img src="{{ post.icon }}" alt="Icon" class="mb-2" style="max-width: 50px;">
+                        {% endif %}
+                        <p class="card-text">{{ post.text }}</p>
+                        {% if post.image_url %}
+                        <img src="{{ post.image_url }}" alt="Post image" class="img-fluid mb-2">
+                        {% endif %}
+                        <p class="text-muted">{{ post.date.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <form method="POST" class="d-inline">
+                            <input type="hidden" name="edit" value="{{ post.id }}">
+                            <button type="submit" class="btn btn-primary btn-sm">ערוך</button>
+                        </form>
+                        <form method="POST" class="d-inline" onsubmit="return confirm('האם אתה בטוח שברצונך למחוק פוסט זה?');">
+                            <input type="hidden" name="delete" value="{{ post.id }}">
+                            <button type="submit" class="btn btn-danger btn-sm">מחק</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('routes.hello') }}" class="btn btn-secondary mt-3">חזור לדף הראשי</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הוסף פוסט חדש - פורטל אגס 9</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <style>
+        #emoji-button {
+            cursor: pointer;
+        }
+        #emoji-picker {
+            position: absolute;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">הוסף פוסט חדש</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">כותרת:</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="text">תוכן:</label>
+                <textarea class="form-control" id="text" name="text" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="icon">אייקון:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="icon" name="icon" readonly>
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="emoji-button">בחר אימוג'י</span>
+                    </div>
+                </div>
+                <div id="emoji-picker" style="display: none;"></div>
+            </div>
+            <div class="form-group">
+                <label for="image">תמונה:</label>
+                <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary">הוסף פוסט</button>
+        </form>
+        <a href="{{ url_for('routes.show_posts') }}" class="btn btn-secondary mt-3">חזור לרשימת הפוסטים</a>
+    </div>
+
+    <script>
+        const emojiButton = document.getElementById('emoji-button');
+        const emojiPicker = document.getElementById('emoji-picker');
+        const iconInput = document.getElementById('icon');
+
+        emojiButton.addEventListener('click', () => {
+            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+        });
+
+        emojiPicker.addEventListener('emoji-click', event => {
+            iconInput.value = event.detail.unicode;
+            emojiPicker.style.display = 'none';
+        });
+
+        document.addEventListener('click', event => {
+            if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
+                emojiPicker.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('load', () => {
+            const picker = new EmojiPicker();
+            emojiPicker.appendChild(picker);
+        });
+    </script>
+</body>
+</html>

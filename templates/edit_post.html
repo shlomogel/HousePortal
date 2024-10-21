@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ערוך פוסט - פורטל אגס 9</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">ערוך פוסט</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="title">כותרת:</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}" required>
+            </div>
+            <div class="form-group">
+                <label for="text">תוכן:</label>
+                <textarea class="form-control" id="text" name="text" rows="3" required>{{ post.text }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="icon">קישור לאייקון:</label>
+                <input type="url" class="form-control" id="icon" name="icon" value="{{ post.icon }}">
+            </div>
+            <div class="form-group">
+                <label for="image">קישור לתמונה:</label>
+                <input type="url" class="form-control" id="image" name="image" value="{{ post.image }}">
+            </div>
+            <button type="submit" class="btn btn-primary">עדכן פוסט</button>
+        </form>
+        <a href="{{ url_for('routes.show_posts') }}" class="btn btn-secondary mt-3">חזור לרשימת הפוסטים</a>
+    </div>
+</body>
+</html>
