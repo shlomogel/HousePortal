@@ -3,32 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ערוך פוסט - פורטל אגס 9</title>
+    <title>עריכת פוסט - פורטל אגס 9</title>
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Your custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">ערוך פוסט</h1>
-        <form method="POST">
-            <div class="form-group">
-                <label for="title">כותרת:</label>
-                <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}" required>
+    <!-- Header -->
+    <header class="header-container">
+        <div class="container">
+            <h1 class="header-text">עריכת פוסט</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="edit-container">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="title">כותרת:</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   value="{{ post.title }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="text">תוכן:</label>
+                            <textarea class="form-control" id="text" name="text" 
+                                     rows="4" required>{{ post.text }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="icon">אייקון:</label>
+                            <input type="text" class="form-control" id="icon" name="icon" 
+                                   value="{{ post.icon }}">
+                        </div>
+
+                        <!-- Important checkbox -->
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="important" 
+                                       name="important" {% if post.important %}checked{% endif %}>
+                                <label class="custom-control-label" for="important">הודעה חשובה</label>
+                            </div>
+                        </div>
+
+                        <!-- Current image display and new image upload -->
+                        <div class="form-group">
+                            {% if post.image %}
+                            <label>תמונה נוכחית:</label>
+                            <img src="{{ url_for('static', filename='uploads/' + post.image) }}" 
+                                 alt="Current image" class="current-image">
+                            {% endif %}
+                            
+                            <label for="image">החלף תמונה (אופציונלי):</label>
+                            <input type="file" class="form-control-file" id="image" name="image">
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-primary ml-2">שמור שינויים</button>
+                            <a href="{{ url_for('routes.show_posts') }}" class="btn btn-secondary">ביטול</a>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="text">תוכן:</label>
-                <textarea class="form-control" id="text" name="text" rows="3" required>{{ post.text }}</textarea>
-            </div>
-            <div class="form-group">
-                <label for="icon">קישור לאייקון:</label>
-                <input type="url" class="form-control" id="icon" name="icon" value="{{ post.icon }}">
-            </div>
-            <div class="form-group">
-                <label for="image">קישור לתמונה:</label>
-                <input type="url" class="form-control" id="image" name="image" value="{{ post.image }}">
-            </div>
-            <button type="submit" class="btn btn-primary">עדכן פוסט</button>
-        </form>
-        <a href="{{ url_for('routes.show_posts') }}" class="btn btn-secondary mt-3">חזור לרשימת הפוסטים</a>
+        </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@ class Post(db.Model):
     icon = db.Column(db.String(100))
     text = db.Column(db.Text, nullable=False)
     image = db.Column(db.String(100))
+    important = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f"<Post {self.title}>"

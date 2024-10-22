@@ -107,6 +107,7 @@ function displayNews(items) {
         div.innerHTML = `
             <div class="news-title">${item.title}</div>
             <div class="news-date">${pubDate.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' })}</div>
+            <div class="news-text">${item.description}</div>
         `;
         newsContainer.appendChild(div);
     });

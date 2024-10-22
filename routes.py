@@ -13,6 +13,7 @@ from flask import (
 from models import db, Post
 from datetime import datetime
 import feedparser
+from bs4 import BeautifulSoup
 from werkzeug.utils import secure_filename
 
 routes = Blueprint("routes", __name__)
@@ -26,13 +27,61 @@ def allowed_file(filename):
 
 @routes.route("/")
 def hello():
-    posts = Post.query.order_by(Post.date.desc()).all()
+    # Get the latest important post
+    important_post = (
+        Post.query.filter_by(important=True).order_by(Post.date.desc()).first()
+    )
+
+    # Get all non-important posts (including those with null important field)
+    posts = (
+        Post.query.filter((Post.important.is_(False)) | (Post.important.is_(None)))
+        .order_by(Post.date.desc())
+        .all()
+    )
+
+    # Process image URLs
     for post in posts:
         if post.image:
             post.image_url = url_for("static", filename=f"uploads/{post.image}")
         else:
             post.image_url = None
-    return render_template("index.html", posts=posts)
+
+    # Process image URL for important post if it exists
+    if important_post and important_post.image:
+        important_post.image_url = url_for(
+            "static", filename=f"uploads/{important_post.image}"
+        )
+
+    return render_template("index.html", posts=posts, important_post=important_post)
+
+
+@routes.route("/debug_posts")
+def debug_posts():
+    all_posts = Post.query.all()
+    posts_info = []
+    for post in all_posts:
+        posts_info.append(
+            {
+                "id": post.id,
+                "title": post.title,
+                "important": post.important,
+                "date": post.date.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+        )
+    return jsonify(posts_info)
+
+
+@routes.route("/fix_posts/<int:post_id>")
+def fix_posts(post_id):
+    post = Post.query.get_or_404(post_id)
+    post.important = False
+    db.session.commit()
+    return jsonify(
+        {
+            "message": f'Post "{post.title}" updated, important set to False',
+            "post_id": post_id,
+        }
+    )
 
 
 @routes.route("/posts", methods=["GET", "POST"])
@@ -46,6 +95,7 @@ def show_posts():
             flash("Post deleted successfully", "success")
         return redirect(url_for("routes.show_posts"))
 
+    # Get all posts (including important ones) for the management page
     posts = Post.query.order_by(Post.date.desc()).all()
     for post in posts:
         if post.image:
@@ -62,9 +112,19 @@ def edit_post(post_id):
         post.title = request.form["title"]
         post.text = request.form["text"]
         post.icon = request.form.get("icon")
-        post.image = request.form.get("image")
+        post.important = "important" in request.form
+
+        # Handle image update
+        if "image" in request.files:
+            file = request.files["image"]
+            if file and file.filename != "":
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+                file.save(file_path)
+                post.image = filename
+
         db.session.commit()
-        flash("Post updated successfully", "success")
+        flash("הפוסט עודכן בהצלחה", "success")
         return redirect(url_for("routes.show_posts"))
     return render_template("edit_post.html", post=post)
 
@@ -75,8 +135,7 @@ def add_post():
         title = request.form["title"]
         text = request.form["text"]
         icon = request.form["icon"]
-
-        logging.info(f"Received post data: title={title}, text={text}, icon={icon}")
+        important = request.form.get("important", "") == "on"
 
         # Handle image upload
         image_filename = None
@@ -104,6 +163,7 @@ def add_post():
             icon=icon,
             image=image_filename,
             date=datetime.utcnow(),
+            important=important,
         )
         db.session.add(new_post)
         db.session.commit()
@@ -116,10 +176,35 @@ def add_post():
 @routes.route("/get_news")
 def get_news():
     try:
-        feed = feedparser.parse("https://rss.walla.co.il/feed/1?type=main")
+        feed = feedparser.parse("https://rss.walla.co.il/feed/1")
         news_items = []
+
         for entry in feed.entries[:]:
-            news_items.append({"title": entry.title, "pubDate": entry.published})
+            # Parse HTML content
+            soup = BeautifulSoup(entry.description, "html.parser")
+
+            # Remove all img tags and their parent a tags if they exist
+            for img in soup.find_all("img"):
+                if img.parent.name == "a":
+                    img.parent.decompose()
+                else:
+                    img.decompose()
+
+            # Remove any remaining a tags that might have contained images
+            for a in soup.find_all("a"):
+                a.decompose()
+
+            # Get the cleaned text
+            clean_description = soup.get_text(strip=True)
+
+            news_items.append(
+                {
+                    "title": entry.title,
+                    "pubDate": entry.published,
+                    "description": clean_description,
+                }
+            )
+
         return jsonify(news_items)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

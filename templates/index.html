@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/weather.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/news.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/important_post.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -23,17 +25,17 @@
         </a>
     </div>
 </div>
-    <div class="container-fluid mt-4">
+   <div class="container-fluid mt-4">
         <div class="row">
-            <div class="col-md-1">
-            </div>
-            <div class="col-md-8">
-                <h2>&nbsp;</h2>
-                <div class="row mb-4" id="constant-cards">
+            <!-- Main content area (9 columns) -->
+            <div class="col-md-9">
+                <!-- Constant cards section -->
+                <div id="constant-cards" class="row mb-4">
                     <div class="col-md-4 d-flex">
                         <div class="card text-center custom-card w-100">
+                            <!-- Your first constant card content -->
                             <div class="card-body d-flex flex-column justify-content-between">
-                                <h5 class="card-title"><i class="fas fa-volume-mute fa-2x"></i></h5>
+                                <h5 class="const-card-title"><i class="fas fa-volume-mute fa-2x"></i></h5>
                                 <div>
                                     <p class="card-text mb-0">נא לשמור על השקט!</p>
                                     <p class="card-text-small mb-0">&nbsp;</p>
@@ -43,8 +45,9 @@
                     </div>
                     <div class="col-md-4 d-flex">
                         <div class="card text-center custom-card w-100">
+                            <!-- Your second constant card content -->
                             <div class="card-body d-flex flex-column justify-content-between">
-                                <h5 class="card-title"><i class="fas fa-video fa-2x"></i></h5>
+                               <h5 class="const-card-title"><i class="fas fa-video fa-2x"></i></h5>
                                 <div>
                                     <p class="card-text">אזהרה</p>
                                     <p class="card-text-small mb-0">מקום זה מצולם במצלמות במעגל סגור</p>
@@ -54,8 +57,9 @@
                     </div>
                     <div class="col-md-4 d-flex">
                         <div class="card text-center custom-card w-100">
+                            <!-- Your third constant card content -->
                             <div class="card-body d-flex flex-column justify-content-between">
-                                <h5 class="card-title"><i class="fas fa-smoking-ban fa-2x"></i></h5>
+                                <h5 class="const-card-title"><i class="fas fa-smoking-ban fa-2x"></i></h5>
                                 <div>
                                     <p class="card-text mb-0">בשטח זה העישון אסור</p>
                                     <p class="card-text-small mb-0">המעשנים עוברים על החוק וגורמים לפגיעה באנשים הנמצאים באזורם</p>
@@ -64,65 +68,100 @@
                         </div>
                     </div>
                 </div>
-                <div id="posts-container" class="row mb-4">
-                    {% for post in posts %}
-                    <div class="col-md-4 d-flex mb-3">
-                        <div class="card text-center custom-card w-100">
-                            <div class="card-body d-flex flex-column justify-content-between">
-                                <h5 class="card-title">{{ post.title }}</h5>
-                                <div>
+
+                <!-- Posts section -->
+                <div id="posts-container" class="row">
+                        {% for post in posts %}
+                        <div class="col-md-24 mb-4">  <!-- Added mb-4 for margin-bottom -->
+                            <div class="card hover-shadow">  <!-- Added hover-shadow class for visual effect -->
+                                <h5 class="card-header">
                                     {% if post.icon %}
-                                        <span class="mb-2" style="font-size: 24px;">{{ post.icon }}</span>
+                                        {{ post.icon }}
+                                    {% else %}
+                                        📢
                                     {% endif %}
-                                    <p>{{ post.text }}</p>
+                                    {{ post.title }}
+                                    
+                                    <!-- 
+                                        <span class="float-left">{{ post.date.strftime('%Y-%m-%d') }}</span>
+                                    -->
+                                </h5>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ post.text }}</h5>
                                     {% if post.image_url %}
-                                        <img src="{{ post.image_url }}" alt="Post image" class="img-fluid mb-2">
+                                        <img src="{{ post.image_url }}" alt="Post image" class="post-image">
                                     {% endif %}
-                                    <p class="text-muted">{{ post.date.strftime('%Y-%m-%d %H:%M') }}</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
                 </div>
-                
-                <!-- <ul id="updates-list" class="list-group">
-                    Content will be dynamically updated here
-                </ul>
-                -->
             </div>
-            
+
+            <!-- Sidebar (3 columns) -->
             <div class="col-md-3">
+                <!-- DateTime widget -->
                 <div class="datetime-widget mb-3">
-                    <div id="datetime-display" class="datetime-display">
-                        <!-- תוכן יוכנס דינמית על ידי JavaScript -->
-                    </div>
+                    <div id="datetime-display" class="datetime-display"></div>
                     <div style="text-align: center; font-weight: bold;">
                         <script src="https://www.hebcal.com/etc/hdate-he.js" crossorigin="anonymous"></script>
                     </div>
                 </div>
-                
+
+                <!-- Weather widget -->
                 <div class="weather-widget mb-3">
-                    <div id="weather-display" class="weather-display">
-                        <!-- תוכן יוכנס דינמית על ידי JavaScript -->
-                    </div>
+                    <div id="weather-display" class="weather-display"></div>
                 </div>
-                <br>
-                <div class="card-header bg-primary text-white">
-                        <h5 class="mb-8">חדשות מוואלה!</h5>
-                    </div>
-                    <br>
+
+                <!-- News section -->
+                <div class="walla-news">
+                    <h5 class="mb-0">חדשות מוואלה!</h5>
+                </div>
                 <div class="card news-container">
-                    
                     <div class="card-body p-0">
-                        <div id="news-container">
-                            <!-- חדשות יוכנסו כאן דינמית -->
-                        </div>
+                        <div id="news-container"></div>
                     </div>
                 </div>
             </div>
-            
         </div>
+        <div class="row">
+            <div class="col-md-9">
+                <div class="posts-container">
+                    <div class="col-md-24 mb-4">
+                        {% if important_post %}
+                        
+                            <div class="important-post hover-shadow">
+                                <h5 class="card-header">
+                                    <div class="important-icon">⚠️
+                                    {{ important_post.title }}
+                                    </div>
+                                </h5>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ important_post.text }}</h5>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <p class="text-center"></p>
+                        {% endif %}
+                    </div>
+                
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="ad-container mb-3">
+                    <p>
+                        פרסם כאן את העסק שלך
+                    </p>
+                    <p>
+                        לייצירת קשר
+                    <br>
+                    <span class="phone-number">054-8099921</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_apscheduler import APScheduler
+from flask_migrate import Migrate
 import logging
 from models import db
 from routes import routes
@@ -22,6 +23,9 @@ logging.basicConfig(level=logging.DEBUG)
 scheduler = APScheduler()
 scheduler.init_app(app)
 scheduler.start()
+
+# Initialize Flask-Migrate
+migrate = Migrate(app, db)
 
 # Register the routes Blueprint
 app.register_blueprint(routes)

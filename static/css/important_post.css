@@ -1,0 +1,41 @@
+.important-post {
+    padding: 15px;
+    background-color: #379777;
+    border-radius: 8px;
+    color: white;  /* Set default text color to white */
+    margin-bottom: 20px;
+}
+
+.important-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+    text-align: center;  /* Align to right */
+}
+
+.important-post .card-header {
+    background: none;  /* Remove default header background */
+    color: white;
+    text-align: center;  /* Align to right */
+    padding: 0;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.important-post .card-title {
+    color: white;
+    font-weight: bold;
+    text-align: center;  /* Align to right */
+    margin: 10px 0;
+}
+
+.important-post .card-body {
+    padding: 0;
+    text-align: center;
+}
+
+/* Add hover effect */
+.important-post.hover-shadow:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: box-shadow 0.3s ease;
+}

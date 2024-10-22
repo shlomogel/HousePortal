@@ -14,7 +14,7 @@
 }
 
 .date-icon {
-    font-size: 2rem;
+    font-size: 4rem;
 }
 
 .date-info {
@@ -23,16 +23,16 @@
 }
 
 .current-date {
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: bold;
 }
 
 .day-of-week {
-    font-size: 1rem;
+    font-size: 2rem;
     font-weight: bold;
 }
 
 .current-time {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     font-weight: bold;
 }

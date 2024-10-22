@@ -43,6 +43,13 @@
                 <label for="image">תמונה:</label>
                 <input type="file" class="form-control-file" id="image" name="image" accept="image/*">
             </div>
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="important" name="important" 
+                        {% if post and post.important %}checked{% endif %}>
+                    <label class="custom-control-label" for="important">הודעה חשובה</label>
+                </div>
+            </div>
             <button type="submit" class="btn btn-primary">הוסף פוסט</button>
         </form>
         <a href="{{ url_for('routes.show_posts') }}" class="btn btn-secondary mt-3">חזור לרשימת הפוסטים</a>
